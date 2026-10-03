@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123b63">
+<meta name="description" content="藥品業務組內通用報價器">
+<link rel="manifest" href="manifest.json">
+<title>藥品業務報價器｜組內版</title>
+<style>
+:root{--navy:#123b63;--blue:#1674c7;--bg:#f3f6fa;--card:#fff;--text:#172033;--muted:#64748b;--line:#d8e0ea;--soft:#eef5fb;--green:#138a5b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif}
+header{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;padding:14px max(16px,calc((100vw - 1100px)/2));box-shadow:0 2px 12px #0002}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand h1{font-size:20px;line-height:1.2;margin:0}.brand p{font-size:12px;margin:4px 0 0;opacity:.8}
+.badge{font-size:11px;border:1px solid #ffffff44;padding:5px 8px;border-radius:99px;white-space:nowrap}
+main{max-width:1100px;margin:auto;padding:16px}
+.tabs{display:flex;gap:8px;margin-bottom:14px;position:sticky;top:70px;z-index:10;background:var(--bg);padding:4px 0}
+.tab{flex:1;border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px;border-radius:10px;font-weight:750}
+.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.section{display:none}.section.active{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--card);border:1px solid #e5eaf0;border-radius:16px;padding:16px;box-shadow:0 3px 16px #1720330b}
+.card h2{font-size:16px;margin:0 0 14px;border-left:4px solid var(--blue);padding-left:9px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 6px}
+.help{font-size:11px;color:var(--muted);font-weight:400}
+input,select,button,textarea{font:inherit}
+input,select{width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);min-height:44px}
+input:focus,select:focus{outline:2px solid #1674c733;border-color:var(--blue)}
+.disabled{background:#f4f6f8}
+.results{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric{background:#f6f8fb;border:1px solid #e5ebf2;border-radius:12px;padding:11px}
+.metric .k{font-size:11px;color:var(--muted)}.metric .v{font-size:19px;font-weight:800;margin-top:3px}
+.metric.primary{background:#ebf5ff;border-color:#bfdef6}.metric.primary .v{color:#075fa8}
+.metric.green{background:#eefaf5;border-color:#c6ead9}.metric.green .v{color:var(--green)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+button{border:0;border-radius:10px;padding:11px 15px;font-weight:800;min-height:44px;cursor:pointer}
+.primary{background:var(--blue);color:#fff}.secondary{background:#e8eef5;color:#19334d}.dark{background:var(--navy);color:#fff}.danger{background:#fff0f0;color:#a62626}
+.note{font-size:12px;line-height:1.6;color:var(--muted)}
+.quote{margin-top:14px;background:#fff;border:1px solid #e0e6ed;border-radius:16px;padding:18px}
+.quote-head{display:flex;justify-content:space-between;gap:12px;border-bottom:2px solid var(--navy);padding-bottom:12px}
+.quote-head h3{margin:0;font-size:20px}.quote-meta{font-size:12px;color:var(--muted);text-align:right}
+.quote-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}
+.quote-table th,.quote-table td{border:1px solid #dfe5ec;padding:9px;text-align:left}.quote-table th{background:#f2f5f8}
+.total{font-weight:900;font-size:17px}
+.history-item{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid #e1e7ee;border-radius:12px;padding:11px;margin-bottom:9px;background:#fff}
+.history-item .meta{font-size:12px;color:var(--muted)}.history-item strong{display:block;margin-bottom:3px}
+.empty{padding:30px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px}
+.footer{margin:22px 0;color:var(--muted);font-size:11px;text-align:center}
+@media(max-width:760px){
+ header{padding:12px 14px}.brand h1{font-size:18px}
+ main{padding:12px}.tabs{top:60px}.grid,.formgrid{grid-template-columns:1fr}.results{grid-template-columns:1fr 1fr}
+ .quote-head{display:block}.quote-meta{text-align:left;margin-top:7px}.quote-table{font-size:12px}
+ button{flex:1}
+}
+@media print{
+ header,.tabs,.no-print,.footer{display:none!important}
+ body{background:#fff}.quote{border:0;padding:0;box-shadow:none}
+ main{padding:0;max-width:none}.section{display:block!important}
+ .quote-table{font-size:12px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <h1>💊 藥品業務報價器</h1>
+      <p>組內通用・手機優先版</p>
+    </div>
+    <span class="badge">V1.0 試用</span>
+  </div>
+</header>
+
+<main>
+  <div class="tabs no-print">
+    <button id="tabCalc" class="tab active" onclick="showTab('calc')">報價計算</button>
+    <button id="tabHistory" class="tab" onclick="showTab('history')">歷史報價</button>
+  </div>
+
+  <section id="calc" class="section active">
+    <div class="grid">
+      <div class="card">
+        <h2>① 藥品資料</h2>
+        <div class="formgrid">
+          <div><label>商品名稱</label><input id="drug" placeholder="例如：XXX Tablet"></div>
+          <div><label>規格</label><input id="spec" placeholder="例如：100mg"></div>
+          <div>
+            <label>每盒顆數</label>
+            <select id="units">
+              <option value="1000">1000 顆 / 盒</option>
+              <option value="840">840 顆 / 盒</option>
+              <option value="custom">自訂</option>
+            </select>
+          </div>
+          <div><label>自訂顆數 <span class="help">（選「自訂」才啟用）</span></label><input id="customUnits" type="number" min="1" value="1000" disabled></div>
+          <div><label>原始單顆價 <span class="help">（不含任何折扣）</span></label><input id="unitPrice" type="number" min="0" step="0.01" value="8"></div>
+          <div><label>健保價／顆</label><input id="nhia" type="number" min="0" step="0.01" value="10"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>② 優惠方案</h2>
+        <div class="formgrid">
+          <div><label>大口合約折數 % <span class="help">（選填）</span></label><input id="contract" type="number" min="0" max="100" step="0.01" placeholder="不使用可留白"></div>
+          <div><label>現折 % <span class="help">（沒有就填 0）</span></label><input id="cash" type="number" min="0" max="100" step="0.01" value="0"></div>
+          <div><label>購買盒數</label><input id="buy" type="number" min="0" step="1" value="10"></div>
+          <div><label>搭贈送盒數 <span class="help">（買幾送幾）</span></label><input id="free" type="number" min="0" step="1" value="2"></div>
+        </div>
+        <p class="note">計算邏輯：原始單顆價 × 每盒顆數 → 回推未折扣單盒售價 → 大口合約（有填才套用）→ 現折 → 以付費盒數 ÷ 實際取得盒數計算買贈後有效成本。</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2>③ 計算結果</h2>
+      <div class="results">
+        <div class="metric"><div class="k">原始單顆價</div><div id="mUnit" class="v">$0.00</div></div>
+        <div class="metric"><div class="k">回推未折扣單盒售價</div><div id="mBox" class="v">$0.00</div></div>
+        <div class="metric"><div class="k">合約後／現折後單盒</div><div id="mAfter" class="v">$0.00</div></div>
+        <div class="metric"><div class="k">實際取得盒數</div><div id="mTotal" class="v">0 盒</div></div>
+        <div class="metric primary"><div class="k">買贈後有效單盒</div><div id="mEffBox" class="v">$0.00</div></div>
+        <div class="metric primary"><div class="k">買贈後有效單顆</div><div id="mEffUnit" class="v">$0.00</div></div>
+        <div class="metric green"><div class="k">健保價差／顆</div><div id="mDiff" class="v">$0.00</div></div>
+        <div class="metric green"><div class="k">健保價差率</div><div id="mRate" class="v">0.00%</div></div>
+      </div>
+      <div class="actions no-print">
+        <button class="primary" onclick="generateQuote()">📄 產生報價單</button>
+        <button class="dark" onclick="shareQuote()">📤 分享此報價</button>
+        <button class="secondary" onclick="saveQuote()">💾 儲存報價</button>
+        <button class="danger" onclick="resetForm()">↺ 清空</button>
+      </div>
+    </div>
+
+    <div id="quoteArea" class="quote" style="display:none"></div>
+  </section>
+
+  <section id="history" class="section">
+    <div class="card">
+      <h2>歷史報價（此裝置）</h2>
+      <p class="note">報價紀錄保存在目前手機／電腦的瀏覽器內，不會自動同步到其他組員裝置。</p>
+      <div class="actions no-print"><button class="danger" onclick="clearHistory()">清除歷史紀錄</button></div>
+      <div id="historyList" style="margin-top:13px"></div>
+    </div>
+  </section>
+
+  <div class="footer">組內網頁版｜資料預設儲存在瀏覽器本機｜建議使用 HTTPS 網址安裝成手機 App</div>
+</main>
+
+<script>
+const FIELDS=['drug','spec','units','customUnits','unitPrice','nhia','contract','cash','buy','free'];
+const $=id=>document.getElementById(id);
+function n(id){const v=parseFloat($(id)?.value);return Number.isFinite(v)?v:0}
+function money(x){return '$'+(Number.isFinite(x)?x:0).toLocaleString('zh-TW',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function selectedUnits(){return $('units').value==='custom'?n('customUnits'):n('units')}
+function calc(){
+  const units=selectedUnits(), unitPrice=n('unitPrice'), boxPrice=unitPrice*units;
+  const contractRaw=$('contract').value.trim();
+  const contract=contractRaw===''?1:n('contract')/100;
+  const cash=n('cash')/100, buy=n('buy'), free=n('free'), total=buy+free, nhia=n('nhia');
+  const contractBox=boxPrice*contract;
+  const afterBox=contractBox*(1-cash);
+  const effectiveBox=total>0?afterBox*buy/total:0;
+  const effectiveUnit=units>0?effectiveBox/units:0;
+  const diff=nhia-effectiveUnit;
+  const rate=nhia>0?diff/nhia*100:0;
+  $('mUnit').textContent=money(unitPrice);
+  $('mBox').textContent=money(boxPrice);
+  $('mAfter').textContent=money(afterBox);
+  $('mTotal').textContent=total.toLocaleString()+' 盒';
+  $('mEffBox').textContent=money(effectiveBox);
+  $('mEffUnit').textContent=money(effectiveUnit);
+  $('mDiff').textContent=money(diff);
+  $('mRate').textContent=rate.toFixed(2)+'%';
+  return {units,unitPrice,boxPrice,contractRaw,contract,contractBox,cash,buy,free,total,afterBox,effectiveBox,effectiveUnit,nhia,diff,rate,
+          drug:$('drug').value.trim()||'未填寫',spec:$('spec').value.trim()||'—'};
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function quoteHTML(d){
+  const date=new Date().toLocaleDateString('zh-TW');
+  return `<div class="quote-head">
+    <div><h3>藥品報價單</h3><div>${esc(d.drug)}　${esc(d.spec)}</div></div>
+    <div class="quote-meta">報價日期：${date}<br>組內報價工具</div>
+  </div>
+  <table class="quote-table">
+    <tr><th>項目</th><th>內容</th></tr>
+    <tr><td>每盒規格</td><td>${d.units.toLocaleString()} 顆／盒</td></tr>
+    <tr><td>原始單顆價（不含折扣）</td><td>${money(d.unitPrice)}／顆</td></tr>
+    <tr><td>回推未折扣單盒售價</td><td>${money(d.boxPrice)}／盒</td></tr>
+    ${d.contractRaw!==''?`<tr><td>大口合約折數</td><td>${esc(d.contractRaw)}%</td></tr><tr><td>合約後單盒價格</td><td>${money(d.contractBox)}／盒</td></tr>`:''}
+    <tr><td>現折</td><td>${n('cash').toFixed(2)}%</td></tr>
+    <tr><td>現折後單盒價格</td><td>${money(d.afterBox)}／盒</td></tr>
+    <tr><td>搭贈方案</td><td>買 ${d.buy} 盒送 ${d.free} 盒</td></tr>
+    <tr><td>實際取得</td><td>${d.total} 盒</td></tr>
+    <tr><td>最終有效單盒成本</td><td class="total">${money(d.effectiveBox)}／盒</td></tr>
+    <tr><td>最終有效單顆成本</td><td class="total">${money(d.effectiveUnit)}／顆</td></tr>
+    <tr><td>健保價</td><td>${money(d.nhia)}／顆</td></tr>
+    <tr><td>健保價差</td><td class="total">${money(d.diff)}／顆（${d.rate.toFixed(2)}%）</td></tr>
+  </table>
+  <p class="note" style="margin-bottom:0">實際交易條件依公司合約、產品政策及實際訂購單為準。</p>`;
+}
+function generateQuote(){const d=calc();$('quoteArea').style.display='block';$('quoteArea').innerHTML=quoteHTML(d);$('quoteArea').scrollIntoView({behavior:'smooth',block:'start'});}
+function snapshot(){
+  const d=calc(); const obj={};
+  FIELDS.forEach(id=>obj[id]=$(id).value); return obj;
+}
+function loadSnapshot(obj){FIELDS.forEach(id=>{if(obj[id]!==undefined)$(id).value=obj[id]}); $('customUnits').disabled=$('units').value!=='custom'; calc();}
+function saveQuote(){
+  const d=calc(); const hist=JSON.parse(localStorage.getItem('drugQuoteHistory')||'[]');
+  hist.unshift({time:new Date().toISOString(),name:d.drug,snapshot:snapshot(),effective:d.effectiveUnit});
+  localStorage.setItem('drugQuoteHistory',JSON.stringify(hist.slice(0,30)));
+  renderHistory(); alert('已儲存到此裝置。');
+}
+function renderHistory(){
+  const hist=JSON.parse(localStorage.getItem('drugQuoteHistory')||'[]'), box=$('historyList');
+  if(!hist.length){box.innerHTML='<div class="empty">目前沒有歷史報價</div>';return}
+  box.innerHTML=hist.map((h,i)=>`<div class="history-item">
+    <div><strong>${esc(h.name)}</strong><div class="meta">${new Date(h.time).toLocaleString('zh-TW')}｜有效單顆 ${money(h.effective)}</div></div>
+    <button class="secondary" onclick="useHistory(${i})">載入</button>
+  </div>`).join('');
+}
+function useHistory(i){const hist=JSON.parse(localStorage.getItem('drugQuoteHistory')||'[]');loadSnapshot(hist[i].snapshot);showTab('calc');generateQuote();}
+function clearHistory(){if(confirm('確定清除這台裝置的歷史報價？')){localStorage.removeItem('drugQuoteHistory');renderHistory();}}
+function resetForm(){
+  $('drug').value='';$('spec').value='';$('units').value='1000';$('customUnits').value='1000';$('unitPrice').value='';$('nhia').value='';$('contract').value='';$('cash').value='0';$('buy').value='1';$('free').value='0';
+  $('customUnits').disabled=true;$('quoteArea').style.display='none';calc();
+}
+function showTab(tab){
+  ['calc','history'].forEach(x=>$(x).classList.toggle('active',x===tab));
+  $('tabCalc').classList.toggle('active',tab==='calc');$('tabHistory').classList.toggle('active',tab==='history');
+  if(tab==='history')renderHistory();
+}
+function shareQuote(){
+  const d=calc();
+  const payload=btoa(unescape(encodeURIComponent(JSON.stringify(snapshot())))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const url=location.origin+location.pathname+'#q='+payload;
+  if(navigator.share){
+    navigator.share({title:'藥品報價單',text:`${d.drug}｜有效單顆 ${money(d.effectiveUnit)}`,url}).catch(()=>{});
+  }else{
+    navigator.clipboard?.writeText(url).then(()=>alert('分享連結已複製，可貼給組員。')).catch(()=>prompt('請複製以下分享連結',url));
+  }
+}
+function loadFromHash(){
+  const h=location.hash;
+  if(!h.startsWith('#q='))return;
+  try{
+    let b64=h.slice(3).replace(/-/g,'+').replace(/_/g,'/');
+    while(b64.length%4)b64+='=';
+    const obj=JSON.parse(decodeURIComponent(escape(atob(b64))));
+    loadSnapshot(obj); generateQuote();
+  }catch(e){console.warn('分享資料無法讀取');}
+}
+FIELDS.forEach(id=>$(id).addEventListener('input',calc));
+$('units').addEventListener('change',()=>{$('customUnits').disabled=$('units').value!=='custom';calc()});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+calc();loadFromHash();renderHistory();
+</script>
+</body>
+</html>

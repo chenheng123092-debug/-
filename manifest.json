@@ -1,0 +1,11 @@
+{
+  "name": "藥品業務報價器｜組內版",
+  "short_name": "藥品報價器",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f6fa",
+  "theme_color": "#123b63",
+  "lang": "zh-Hant",
+  "description": "藥品業務組內通用、手機優先的報價計算與報價單工具",
+  "icons": []
+}
